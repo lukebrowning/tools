@@ -1,13 +1,22 @@
 Test and debug trove development patches before upstreaming
 ===========================================================
 
-trovestack-run.sh contains code for patching several
+The scripts run by the user are trovestack-run-gate-tests.sh
+and trovestack-run-int-tests.sh.  They invoke
+trovestack-run.sh which contains code for patching several
 OpenStack projects including trove, diskimage-builder,
-devstack, requirements, ... 
+devstack, requirements, ...
+
+The basic development process is shown below.
+
+Note:  if there are no development patches and you
+just want to test the upstream code as is, then skip step 1.
+You will need to apply the trove-localrc.patch in step 2.
 
 1) transfer patch from gerrit to local machine
 
-2) perform the following::
+2) re-generate your Trove patch with a small change provided
+   in the patches directory.
 
      X=~/gerritpatch.diff
 
@@ -18,7 +27,11 @@ devstack, requirements, ...
      git diff > ~/patches/master/trove.patch
      rm -rf /tmp/trove
 
-3) run trovestack-run-gate.sh or trovestack-run-int.sh
+     If the trove-localrc.patch does not apply cleaning
+     then you should re-clone and manually make the code
+     change.  It is a very small code change.
+
+3) run trovestack-run-gate-tests.sh or trovestack-run-int-tests.sh
 
    Specify --help for command arguments
 
@@ -31,14 +44,14 @@ devstack, requirements, ...
 Debug
 -----
 
-log files are provided.
+log files are generated.
 
 One can exercise Trove through the OpenStack GUI by attaching
 a browser to the local host's IP address.  For example,
 http://x.x.x.x/dashboard. The default users are admin and
 demo.  The password is 'passw0rd'.
 
-Some times when a test fails the guest images still exist
+Sometimes when a test fails the guest images are still present
 and are visible through the browser.  In this case, the datastore
 instance detail tab may contain a stack traceback.
 
