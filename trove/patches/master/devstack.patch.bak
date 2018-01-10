@@ -1,0 +1,13 @@
+diff --git a/stackrc b/stackrc
+index ffe4050..3c0308d 100644
+--- a/stackrc
++++ b/stackrc
+@@ -51,7 +51,7 @@ KEYSTONE_REGION_NAME=${KEYSTONE_REGION_NAME:-$REGION_NAME}
+ # This allows us to pass ``ENABLED_SERVICES``
+ if ! isset ENABLED_SERVICES ; then
+     # Keystone - nothing works without keystone
+-    ENABLED_SERVICES=key
++    ENABLED_SERVICES=keystone
+     # Nova - services to support libvirt based openstack clouds
+     ENABLED_SERVICES+=,n-api,n-cpu,n-cond,n-sch,n-novnc,n-cauth,n-api-meta
+     # Placement service needed for Nova

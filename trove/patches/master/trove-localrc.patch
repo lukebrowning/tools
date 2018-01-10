@@ -1,0 +1,25 @@
+diff --git a/integration/scripts/localrc.rc b/integration/scripts/localrc.rc
+index f87ca53..1befc0b 100644
+--- a/integration/scripts/localrc.rc
++++ b/integration/scripts/localrc.rc
+@@ -38,11 +38,16 @@ if [[ $ENABLE_MISTRAL = true ]]; then
+     enable_plugin mistral ${GIT_OPENSTACK}/mistral.git $PROJ_BRANCH
+ fi
+ 
+-# Use Git repositories for client components
++# Use Git repositories for client components, which affects the content
++# of requirements/upper-constraints.txt.  These components have a local
++# git file reference so that the python module are pip installed from
++# their local git repository.  However, these repositories are not
++# addressable in the chroot'd environment from which guest images are
++# built, so don't include in LIBS_FROM_GIT any client component that
++# is also used in the guest image.  For example, python-neutronclient.
++# They are resolved via their version number.
++
+ LIBS_FROM_GIT=python-troveclient
+-if [[ $ENABLE_NEUTRON = true ]]; then
+-    LIBS_FROM_GIT+=,python-neutronclient
+-fi
+ if [[ $ENABLE_MISTRAL = true ]]; then
+     LIBS_FROM_GIT+=,python-mistralclient
+ fi

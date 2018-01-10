@@ -1,0 +1,13 @@
+diff --git a/diskimage_builder/elements/cache-url/bin/cache-url b/diskimage_builder/elements/cache-url/bin/cache-url
+index 50b4d63..7e2edcc 100755
+--- a/diskimage_builder/elements/cache-url/bin/cache-url
++++ b/diskimage_builder/elements/cache-url/bin/cache-url
+@@ -86,7 +86,7 @@ else
+     success="Downloaded and cached $url for the first time"
+ fi
+ 
+-rcode=$(curl -v -L -o $tmp -w '%{http_code}' --connect-timeout 10 $curl_opts $url $time_cond)
++rcode=$(eval curl -v -L -o $tmp -w '%{http_code}' --connect-timeout 10 $curl_opts $url $time_cond)
+ if [ "$rcode" == "200" -o "${url:0:7}" == "file://" ] ; then
+     # In cases where servers ignore the Modified time,
+     # curl cancels the download, outputs a 200 and leaves

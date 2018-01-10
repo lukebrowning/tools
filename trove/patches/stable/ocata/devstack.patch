@@ -1,0 +1,13 @@
+diff --git a/functions b/functions
+index 5504ef5..7743af4 100644
+--- a/functions
++++ b/functions
+@@ -328,7 +328,7 @@ function upload_image {
+     esac
+ 
+     if is_arch "ppc64le" || is_arch "ppc64" || is_arch "ppc"; then
+-        img_property="--property hw_disk_bus=scsi --property hw_scsi_model=virtio-scsi --property hw_cdrom_bus=scsi --property os_command_line=console=hvc0"
++        img_property="--property hw_cdrom_bus=scsi --property os_command_line=console=hvc0"
+     fi
+ 
+     if is_arch "aarch64"; then

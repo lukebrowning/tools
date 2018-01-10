@@ -1,0 +1,565 @@
+diff --git a/devstack/settings b/devstack/settings
+index be3074f..cff05e7 100644
+--- a/devstack/settings
++++ b/devstack/settings
+@@ -27,9 +27,16 @@ TROVE_LOCAL_CONF_DIR=${TROVE_LOCAL_CONF_DIR:-${TROVE_DIR}/etc/trove}
+ TROVE_LOCAL_API_PASTE_INI=${TROVE_LOCAL_API_PASTE_INI:-${TROVE_LOCAL_CONF_DIR}/api-paste.ini}
+ TROVE_LOCAL_POLICY_JSON=${TROVE_LOCAL_POLICY_JSON:-${TROVE_LOCAL_CONF_DIR}/policy.json}
+ TROVE_AUTH_CACHE_DIR=${TROVE_AUTH_CACHE_DIR:-/var/cache/trove}
++
+ TROVE_DATASTORE_TYPE=${TROVE_DATASTORE_TYPE:-"mysql"}
+-TROVE_DATASTORE_VERSION=${TROVE_DATASTORE_VERSION:-"5.6"}
+-TROVE_DATASTORE_PACKAGE=${TROVE_DATASTORE_PACKAGE:-"mysql-server-5.6"}
++if [ "$DISTRO" == "xenial" ]; then
++    TROVE_DATASTORE_VERSION=${TROVE_DATASTORE_VERSION:-"5.7"}
++    TROVE_DATASTORE_PACKAGE=${TROVE_DATASTORE_PACKAGE:-"mysql-server"}
++else
++    TROVE_DATASTORE_VERSION=${TROVE_DATASTORE_VERSION:-"5.6"}
++    TROVE_DATASTORE_PACKAGE=${TROVE_DATASTORE_PACKAGE:-"mysql-server-5.6"}
++fi
++echo TROVE_DATASTORE_PACKAGE=$TROVE_DATASTORE_PACKAGE
+ 
+ # Configuration values listed here for reference
+ TROVE_MAX_ACCEPTED_VOLUME_SIZE=${TROVE_MAX_ACCEPTED_VOLUME_SIZE}
+diff --git a/integration/scripts/conf/cassandra.conf b/integration/scripts/conf/cassandra.conf
+index 5a2f0ac..f322d09 100644
+--- a/integration/scripts/conf/cassandra.conf
++++ b/integration/scripts/conf/cassandra.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.large-5",
+-    "instance_bigger_flavor_name": "test.large-5.resize",
+-    "instance_eph_flavor_name": "test.eph.large-5",
+-    "instance_bigger_eph_flavor_name": "test.eph.large-5.resize",
++    "instance_flavor_name": "test.large-8",
++    "instance_bigger_flavor_name": "test.large-8.resize",
++    "instance_eph_flavor_name": "test.eph.large-8",
++    "instance_bigger_eph_flavor_name": "test.eph.large-8.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/couchbase.conf b/integration/scripts/conf/couchbase.conf
+index 5a2f0ac..f322d09 100644
+--- a/integration/scripts/conf/couchbase.conf
++++ b/integration/scripts/conf/couchbase.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.large-5",
+-    "instance_bigger_flavor_name": "test.large-5.resize",
+-    "instance_eph_flavor_name": "test.eph.large-5",
+-    "instance_bigger_eph_flavor_name": "test.eph.large-5.resize",
++    "instance_flavor_name": "test.large-8",
++    "instance_bigger_flavor_name": "test.large-8.resize",
++    "instance_eph_flavor_name": "test.eph.large-8",
++    "instance_bigger_eph_flavor_name": "test.eph.large-8.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/db2.conf b/integration/scripts/conf/db2.conf
+index a842ea0..e9a4e28 100644
+--- a/integration/scripts/conf/db2.conf
++++ b/integration/scripts/conf/db2.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.small-5",
+-    "instance_bigger_flavor_name": "test.small-5.resize",
+-    "instance_eph_flavor_name": "test.eph.small-5",
+-    "instance_bigger_eph_flavor_name": "test.eph.small-5.resize",
++    "instance_flavor_name": "test.small-8",
++    "instance_bigger_flavor_name": "test.small-8.resize",
++    "instance_eph_flavor_name": "test.eph.small-8",
++    "instance_bigger_eph_flavor_name": "test.eph.small-8.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/mariadb.conf b/integration/scripts/conf/mariadb.conf
+index 0e29d11..15998d2 100644
+--- a/integration/scripts/conf/mariadb.conf
++++ b/integration/scripts/conf/mariadb.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.small-4",
+-    "instance_bigger_flavor_name": "test.small-4.resize",
+-    "instance_eph_flavor_name": "test.eph.small-4",
+-    "instance_bigger_eph_flavor_name": "test.eph.small-4.resize",
++    "instance_flavor_name": "test.small-7",
++    "instance_bigger_flavor_name": "test.small-7.resize",
++    "instance_eph_flavor_name": "test.eph.small-7",
++    "instance_bigger_eph_flavor_name": "test.eph.small-7.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/mongodb.conf b/integration/scripts/conf/mongodb.conf
+index 0e0aae0..be0989b 100644
+--- a/integration/scripts/conf/mongodb.conf
++++ b/integration/scripts/conf/mongodb.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.large-5",
+-    "instance_bigger_flavor_name": "test.large-5.resize",
+-    "instance_eph_flavor_name": "test.eph.large-5",
+-    "instance_bigger_eph_flavor_name": "test.eph.large-5.resize",
++    "instance_flavor_name": "test.large-8",
++    "instance_bigger_flavor_name": "test.large-8.resize",
++    "instance_eph_flavor_name": "test.eph.large-8",
++    "instance_bigger_eph_flavor_name": "test.eph.large-8.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 5,
+diff --git a/integration/scripts/conf/mysql.conf b/integration/scripts/conf/mysql.conf
+index 0e29d11..15998d2 100644
+--- a/integration/scripts/conf/mysql.conf
++++ b/integration/scripts/conf/mysql.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.small-4",
+-    "instance_bigger_flavor_name": "test.small-4.resize",
+-    "instance_eph_flavor_name": "test.eph.small-4",
+-    "instance_bigger_eph_flavor_name": "test.eph.small-4.resize",
++    "instance_flavor_name": "test.small-7",
++    "instance_bigger_flavor_name": "test.small-7.resize",
++    "instance_eph_flavor_name": "test.eph.small-7",
++    "instance_bigger_eph_flavor_name": "test.eph.small-7.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/percona.conf b/integration/scripts/conf/percona.conf
+index 0e29d11..15998d2 100644
+--- a/integration/scripts/conf/percona.conf
++++ b/integration/scripts/conf/percona.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.small-4",
+-    "instance_bigger_flavor_name": "test.small-4.resize",
+-    "instance_eph_flavor_name": "test.eph.small-4",
+-    "instance_bigger_eph_flavor_name": "test.eph.small-4.resize",
++    "instance_flavor_name": "test.small-7",
++    "instance_bigger_flavor_name": "test.small-7.resize",
++    "instance_eph_flavor_name": "test.eph.small-7",
++    "instance_bigger_eph_flavor_name": "test.eph.small-7.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/postgresql.conf b/integration/scripts/conf/postgresql.conf
+index 8033f58..42e87ce 100644
+--- a/integration/scripts/conf/postgresql.conf
++++ b/integration/scripts/conf/postgresql.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.medium-4",
+-    "instance_bigger_flavor_name": "test.medium-4.resize",
+-    "instance_eph_flavor_name": "test.eph.medium-4",
+-    "instance_bigger_eph_flavor_name": "test.eph.medium-4.resize",
++    "instance_flavor_name": "test.medium-7",
++    "instance_bigger_flavor_name": "test.medium-7.resize",
++    "instance_eph_flavor_name": "test.eph.medium-7",
++    "instance_bigger_eph_flavor_name": "test.eph.medium-7.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/pxc.conf b/integration/scripts/conf/pxc.conf
+index 0e29d11..15998d2 100644
+--- a/integration/scripts/conf/pxc.conf
++++ b/integration/scripts/conf/pxc.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.small-4",
+-    "instance_bigger_flavor_name": "test.small-4.resize",
+-    "instance_eph_flavor_name": "test.eph.small-4",
+-    "instance_bigger_eph_flavor_name": "test.eph.small-4.resize",
++    "instance_flavor_name": "test.small-7",
++    "instance_bigger_flavor_name": "test.small-7.resize",
++    "instance_eph_flavor_name": "test.eph.small-7",
++    "instance_bigger_eph_flavor_name": "test.eph.small-7.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/redis.conf b/integration/scripts/conf/redis.conf
+index 65bd382..37de459 100644
+--- a/integration/scripts/conf/redis.conf
++++ b/integration/scripts/conf/redis.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.tiny-3",
+-    "instance_bigger_flavor_name": "test.tiny-3.resize",
+-    "instance_eph_flavor_name": "test.eph.tiny-3",
+-    "instance_bigger_eph_flavor_name": "test.eph.tiny-3.resize",
++    "instance_flavor_name": "test.tiny-4",
++    "instance_bigger_flavor_name": "test.tiny-4.resize",
++    "instance_eph_flavor_name": "test.eph.tiny-4",
++    "instance_bigger_eph_flavor_name": "test.eph.tiny-4.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 1,
+diff --git a/integration/scripts/conf/test_begin.conf b/integration/scripts/conf/test_begin.conf
+index eff96de..19672fc 100644
+--- a/integration/scripts/conf/test_begin.conf
++++ b/integration/scripts/conf/test_begin.conf
+@@ -97,5 +97,5 @@
+     "shared_network_subnet": "%shared_network_subnet%",
+     "instance_fault_1_flavor_name": "test.fault_1-1",
+     "instance_fault_1_eph_flavor_name": "test.eph.fault_1-1",
+-    "instance_fault_2_flavor_name": "test.fault_2-5",
+-    "instance_fault_2_eph_flavor_name": "test.eph.fault_2-5",
++    "instance_fault_2_flavor_name": "test.fault_2-7",
++    "instance_fault_2_eph_flavor_name": "test.eph.fault_2-7",
+diff --git a/integration/scripts/conf/vertica.conf b/integration/scripts/conf/vertica.conf
+index 242d7fa..c42f7f3 100644
+--- a/integration/scripts/conf/vertica.conf
++++ b/integration/scripts/conf/vertica.conf
+@@ -1,6 +1,6 @@
+-    "instance_flavor_name": "test.large-10",
+-    "instance_bigger_flavor_name": "test.large-10.resize",
+-    "instance_eph_flavor_name": "test.eph.large-10",
+-    "instance_bigger_eph_flavor_name": "test.eph.large-10.resize",
++    "instance_flavor_name": "test.large-13",
++    "instance_bigger_flavor_name": "test.large-13.resize",
++    "instance_eph_flavor_name": "test.eph.large-13",
++    "instance_bigger_eph_flavor_name": "test.eph.large-13.resize",
+     "trove_volume_support": true,
+     "trove_volume_size": 5,
+diff --git a/integration/scripts/files/elements/fedora-mysql/post-install.d/30-register-mysql-service b/integration/scripts/files/elements/fedora-mysql/post-install.d/30-register-mysql-service
+old mode 100644
+new mode 100755
+diff --git a/integration/scripts/files/elements/ubuntu-mysql/pre-install.d/10-percona-apt-key b/integration/scripts/files/elements/ubuntu-mysql/pre-install.d/10-percona-apt-key
+index d62c605..eedbe07 100755
+--- a/integration/scripts/files/elements/ubuntu-mysql/pre-install.d/10-percona-apt-key
++++ b/integration/scripts/files/elements/ubuntu-mysql/pre-install.d/10-percona-apt-key
+@@ -9,6 +9,12 @@ set -o xtrace
+ [ -n "${GUEST_USERNAME}" ] || die "GUEST_USERNAME needs to be set to the user for the guest image"
+ [ -n "${RELEASE}" ] || die "RELEASE must be set to a valid Ubuntu release (e.g. trusty)"
+ 
++# Percona website does not provide packages for ppc64le
++ARCH=$(uname -m)
++if [ "$ARCH" == "ppc64le" ]; then
++    exit 0
++fi
++
+ # Add Percona GPG key
+ mkdir -p /home/${GUEST_USERNAME}/.gnupg
+ 
+diff --git a/integration/scripts/files/elements/ubuntu-xenial-guest/post-install.d/91-hwe-kernel b/integration/scripts/files/elements/ubuntu-xenial-guest/post-install.d/91-hwe-kernel
+new file mode 100755
+index 0000000..c6f7dfd
+--- /dev/null
++++ b/integration/scripts/files/elements/ubuntu-xenial-guest/post-install.d/91-hwe-kernel
+@@ -0,0 +1,17 @@
++#!/bin/bash
++
++set -e
++set -o xtrace
++
++# The HWE kernel must be installed for nested virtualization on ppc64le and ppc64
++
++if [ "$DIB_USE_HWE_KERNEL" == "yes" ]; then
++    export DEBIAN_FRONTEND=noninteractive
++
++    PKG_ARCH=$(dpkg --print-architecture)
++
++    if [[ "$PKG_ARCH" =~ "ppc64" ]]; then
++        apt-get --allow-unauthenticated install -y linux-generic-hwe-16.04
++    fi
++fi
++
+diff --git a/integration/scripts/files/elements/ubuntu-xenial-mysql/install.d/30-mysql b/integration/scripts/files/elements/ubuntu-xenial-mysql/install.d/30-mysql
+index 75ccdc6..24a6641 100755
+--- a/integration/scripts/files/elements/ubuntu-xenial-mysql/install.d/30-mysql
++++ b/integration/scripts/files/elements/ubuntu-xenial-mysql/install.d/30-mysql
+@@ -8,10 +8,39 @@ set -o xtrace
+ 
+ export DEBIAN_FRONTEND=noninteractive
+ 
+-add-apt-repository 'deb http://archive.ubuntu.com/ubuntu trusty universe'
+-apt-get -y  update
++apt-get --allow-unauthenticated -y install mysql-client mysql-server
+ 
+-apt-get --allow-unauthenticated -y install mysql-client-5.6 mysql-server-5.6 percona-xtrabackup${PXB_VERSION_OVERRIDE}
++# Xenial provides mysql 5.7 which requires percona-xtrabackup-24
++
++PXB_VERSION_OVERRIDE=24
++PKGS=$(apt-cache search percona-xtrabackup-${PXB_VERSION_OVERRIDE})
++if [[ "$PKGS" == *"percona-xtrabackup-$PXB_VERSION_OVERRIDE"* ]]; then
++    apt-get --allow-unauthenticated -y install percona-xtrabackup-${PXB_VERSION_OVERRIDE}
++else
++    # Architecture is not supported by percona website.  Compile and install it
++    PXB_VERSION=${PXB_VERSION_OVERRIDE:0:1}.${PXB_VERSION_OVERRIDE:1:1}
++
++    apt-get --allow-unauthenticated -y install build-essential flex bison automake autoconf \
++       libtool cmake libaio-dev mysql-client libncurses-dev zlib1g-dev \
++       libgcrypt11-dev libev-dev libcurl4-gnutls-dev vim-common
++
++    pushd /tmp
++
++    git clone https://github.com/percona/percona-xtrabackup.git
++    cd percona-xtrabackup
++    git checkout $PXB_VERSION
++
++    mkdir /tmp/boost
++    cmake -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/tmp/boost -DBUILD_CONFIG=xtrabackup_release -DWITH_MAN_PAGES=OFF && make -j4
++    make install
++    ln -s /usr/local/xtrabackup/bin/* /usr/bin/
++
++    dpkg -P build-essential automake autoconf libtool cmake
++
++    popd
++
++    rm -rf /tmp/boost /tmp/percona-xtrabackup
++fi
+ 
+ cat >/etc/mysql/conf.d/no_perf_schema.cnf <<_EOF_
+ [mysqld]
+@@ -26,7 +55,9 @@ cat >/etc/mysql/my.cnf <<_EOF_
+ !includedir /etc/mysql/conf.d/
+ _EOF_
+ 
+-rm /etc/init/mysql.conf
+-systemctl daemon-reload
++if [ -e /etc/init/mysql.conf ]; then
++    rm -f /etc/init/mysql.conf
++fi
++
+ systemctl enable mysql
+ 
+diff --git a/integration/scripts/files/requirements/ubuntu-requirements.txt b/integration/scripts/files/requirements/ubuntu-requirements.txt
+index 9607060..13f615c 100644
+--- a/integration/scripts/files/requirements/ubuntu-requirements.txt
++++ b/integration/scripts/files/requirements/ubuntu-requirements.txt
+@@ -15,7 +15,6 @@ python-heatclient>=0.2.9
+ passlib
+ jinja2
+ PyMySQL>=0.6.2  # MIT License
+-python-neutronclient>=2.3.6,<3
+ netifaces>=0.10.4
+ oslo.config>=1.4.0 # Apache-2.0
+ oslo.messaging>=1.4.0,!=1.5.0
+diff --git a/integration/scripts/functions b/integration/scripts/functions
+index a1f64c8..4f6cde7 100644
+--- a/integration/scripts/functions
++++ b/integration/scripts/functions
+@@ -301,9 +301,9 @@ function git_checkout() {
+ 
+     if [ -n "$REPO_BRANCH" ]; then
+         pushd "$REPO_DIR"
+-        if [ $PROJECT == "diskimage-builder" ] || [ $PROJECT == "tripleo-image-elements" ]; then
+-            REPO_BRANCH=master
+-        fi
++#        if [ $PROJECT == "diskimage-builder" ] || [ $PROJECT == "tripleo-image-elements" ]; then
++#            REPO_BRANCH=master
++#        fi
+         CURRENT_BRANCH=$(git branch | grep "\*" | awk '{print $2}')
+         GIT_STATUS=$(git checkout "$REPO_BRANCH" &> /dev/null || echo "failed")
+         if [[ "$GIT_STATUS" = "failed" ]]; then
+diff --git a/integration/scripts/functions_qemu b/integration/scripts/functions_qemu
+index e0cbac1..2508fc9 100644
+--- a/integration/scripts/functions_qemu
++++ b/integration/scripts/functions_qemu
+@@ -21,9 +21,20 @@ function build_vm() {
+     if [ $DISTRO == 'ubuntu' ]; then
+         export DIB_RELEASE=$RELEASE
+         export DIB_CLOUD_IMAGES=cloud-images.ubuntu.com
+-    fi
+-    if [ $DISTRO == 'fedora' ]; then
++        ARCH=$(dpkg --print-architecture)
++    elif [ $DISTRO == 'fedora' ]; then
+         EXTRA_ELEMENTS=selinux-permissive
++        ARCH=amd64
++    fi
++
++    if [[ $ARCH =~ 'ppc64' ]]; then
++        # ppc64 and ppc64le require HWE kernel for nested virtualization
++        export DIB_USE_HWE_KERNEL=yes
++
++        # ppc64le compiles projects when packages are not provided, so disable tmpfs ram disk
++        TMPFS_ARGS=--no-tmpfs
++    else
++        TMPFS_ARGS=""
+     fi
+ 
+     export HOST_USERNAME
+@@ -45,8 +56,9 @@ function build_vm() {
+     export BRANCH_OVERRIDE
+     export DIB_APT_CONF_DIR=/etc/apt/apt.conf.d
+     export DIB_CLOUD_INIT_ETC_HOSTS=true
+-    local QEMU_IMG_OPTIONS=$(! $(qemu-img | grep -q 'version 1') && echo "--qemu-img-options compat=0.10")
+-    disk-image-create -a amd64 -o "${VM}" \
++    local QEMU_IMG_OPTIONS=$(! $(qemu-img --version | grep -q 'version 1') && echo "--qemu-img-options compat=0.10")
++
++    disk-image-create ${TMPFS_ARGS} -a ${ARCH} -o "${VM}" \
+         -x ${QEMU_IMG_OPTIONS} ${DISTRO} ${EXTRA_ELEMENTS} vm heat-cfntools \
+         cloud-init-datasources ${DISTRO}-${RELEASE}-guest ${DISTRO}-${RELEASE}-${SERVICE_TYPE}
+ }
+diff --git a/integration/scripts/trovestack b/integration/scripts/trovestack
+index c9e43b8..c1cb8e0 100755
+--- a/integration/scripts/trovestack
++++ b/integration/scripts/trovestack
+@@ -549,46 +549,57 @@ function cmd_set_datastore() {
+     # rd_manage datastore_update <datastore_name> <default_version>
+     rd_manage datastore_update "$DATASTORE_TYPE" ""
+     PACKAGES=${PACKAGES:-""}
+-    if [ "$DATASTORE_TYPE" == "mysql" ]; then
+-        set_mysql_pkg
+-        PACKAGES=${PACKAGES:-$MYSQL_PKG}
+-        VERSION="5.6"
+-    elif [ "$DATASTORE_TYPE" == "percona" ]; then
+-        PACKAGES=${PACKAGES:-"percona-server-server-5.6"}
+-        VERSION="5.6"
+-    elif [ "$DATASTORE_TYPE" == "pxc" ]; then
+-        PACKAGES=${PACKAGES:-"percona-xtradb-cluster-server-5.6"}
+-        VERSION="5.6"
+-    elif [ "$DATASTORE_TYPE" == "mariadb" ]; then
+-        PACKAGES=${PACKAGES:-"mariadb-server"}
+-        VERSION="10.1"
+-    elif [ "$DATASTORE_TYPE" == "mongodb" ]; then
+-        PACKAGES=${PACKAGES:-"mongodb-org"}
+-        VERSION="3.2"
+-    elif [ "$DATASTORE_TYPE" == "redis" ]; then
+-        PACKAGES=${PACKAGES:-"redis-server"}
+-        VERSION="3.0"
+-    elif [ "$DATASTORE_TYPE" == "cassandra" ]; then
+-        PACKAGES=${PACKAGES:-"cassandra"}
+-        VERSION="2.1.0"
+-    elif [ "$DATASTORE_TYPE" == "couchbase" ]; then
+-        PACKAGES=${PACKAGES:-"couchbase-server"}
+-        VERSION="2.2.0"
+-    elif [ "$DATASTORE_TYPE" == "postgresql" ]; then
+-        PACKAGES=${PACKAGES:-"postgresql-9.4"}
+-        VERSION="9.4"
+-    elif [ "$DATASTORE_TYPE" == "couchdb" ]; then
+-        PACKAGES=${PACKAGES:-"couchdb"}
+-        VERSION="1.6.1"
+-    elif [ "$DATASTORE_TYPE" == "vertica" ]; then
+-        PACKAGES=${PACKAGES:-"vertica"}
+-        VERSION="7.1"
+-    elif [ "$DATASTORE_TYPE" == "db2" ]; then
+-        PACKAGES=${PACKAGES:-""}
+-        VERSION="10.5"
++
++    if [ "$RELEASE" == "xenial" ]; then
++        if [ "$DATASTORE_TYPE" == "mysql" ]; then
++            PACKAGES=${PACKAGES:-"mysql-server"}
++            VERSION="5.7"
++        else
++            echo "Unrecognized datastore type. ($DATASTORE_TYPE)"
++            exit 1
++        fi
+     else
+-        echo "Unrecognized datastore type. ($DATASTORE_TYPE)"
+-        exit 1
++        if [ "$DATASTORE_TYPE" == "mysql" ]; then
++            set_mysql_pkg
++            PACKAGES=${PACKAGES:-$MYSQL_PKG}
++            VERSION="5.6"
++        elif [ "$DATASTORE_TYPE" == "percona" ]; then
++            PACKAGES=${PACKAGES:-"percona-server-server-5.6"}
++            VERSION="5.6"
++        elif [ "$DATASTORE_TYPE" == "pxc" ]; then
++            PACKAGES=${PACKAGES:-"percona-xtradb-cluster-server-5.6"}
++            VERSION="5.6"
++        elif [ "$DATASTORE_TYPE" == "mariadb" ]; then
++            PACKAGES=${PACKAGES:-"mariadb-server"}
++            VERSION="10.1"
++        elif [ "$DATASTORE_TYPE" == "mongodb" ]; then
++            PACKAGES=${PACKAGES:-"mongodb-org"}
++            VERSION="3.2"
++        elif [ "$DATASTORE_TYPE" == "redis" ]; then
++            PACKAGES=${PACKAGES:-"redis-server"}
++            VERSION="3.0"
++        elif [ "$DATASTORE_TYPE" == "cassandra" ]; then
++            PACKAGES=${PACKAGES:-"cassandra"}
++            VERSION="2.1.0"
++        elif [ "$DATASTORE_TYPE" == "couchbase" ]; then
++            PACKAGES=${PACKAGES:-"couchbase-server"}
++            VERSION="2.2.0"
++        elif [ "$DATASTORE_TYPE" == "postgresql" ]; then
++            PACKAGES=${PACKAGES:-"postgresql-9.4"}
++            VERSION="9.4"
++        elif [ "$DATASTORE_TYPE" == "couchdb" ]; then
++            PACKAGES=${PACKAGES:-"couchdb"}
++            VERSION="1.6.1"
++        elif [ "$DATASTORE_TYPE" == "vertica" ]; then
++            PACKAGES=${PACKAGES:-"vertica"}
++            VERSION="7.1"
++        elif [ "$DATASTORE_TYPE" == "db2" ]; then
++            PACKAGES=${PACKAGES:-""}
++            VERSION="10.5"
++        else
++            echo "Unrecognized datastore type. ($DATASTORE_TYPE)"
++            exit 1
++        fi
+     fi
+ 
+     sed -i "s/%datastore_type%/$DATASTORE_TYPE/g" $TEST_CONF
+@@ -670,7 +681,7 @@ function install_test_packages() {
+         if [ "$DISTRO" == "ubuntu" ]; then
+ 	        # Install Couchbase SDK for scenario tests.
+ 	        sudo -H $HTTP_PROXY curl http://packages.couchbase.com/ubuntu/couchbase.key | sudo apt-key add -
+-	        echo "deb http://packages.couchbase.com/ubuntu trusty trusty/main" | sudo tee /etc/apt/sources.list.d/couchbase-csdk.list
++	        echo "deb http://packages.couchbase.com/ubuntu $RELEASE $RELEASE/main" | sudo tee /etc/apt/sources.list.d/couchbase-csdk.list
+ 	        sudo -H $HTTP_PROXY apt-get update
+ 	        sudo -H $HTTP_PROXY apt-get --allow-unauthenticated -y install libcouchbase-dev
+ 	        sudo -H $HTTP_PROXY pip install --upgrade couchbase
+@@ -762,23 +773,23 @@ function add_test_flavors() {
+     # name id ram root_vol vcpu
+     # the ram and vcpu for name.resize are automatically calculated
+     # eph and non-eph flavors are created for each entry
+-    add_flavor 'tiny' 10 512 3 1
++    add_flavor 'tiny' 10 1024 4 1
+ 
+-    add_flavor 'small' 15 768 3 1
+-    add_flavor 'small' 16 768 4 1
+-    add_flavor 'small' 17 768 5 1
++    add_flavor 'small' 15 1536 6 1
++    add_flavor 'small' 16 1536 7 1
++    add_flavor 'small' 17 1536 8 1
+ 
+-    add_flavor 'medium' 20 1024 4 1
+-    add_flavor 'medium' 21 1024 5 1
++    add_flavor 'medium' 20 2048 7 1
++    add_flavor 'medium' 21 2048 8 1
+ 
+-    add_flavor 'large' 25 2048 5 1
+-    add_flavor 'large' 26 2048 10 1
+-    add_flavor 'large' 27 2048 15 1
++    add_flavor 'large' 25 4096 8 1
++    add_flavor 'large' 26 4096 13 1
++    add_flavor 'large' 27 4096 18 1
+ 
+     # This will allow Nova to create an instance, but not enough disk to boot the image
+-    add_flavor 'fault_1' 30 512 1 1 'skip_resize'
++    add_flavor 'fault_1' 30 2048 1 1 'skip_resize'
+     # This should be enough memory to cause Nova to fail entirely due to too much allocation
+-    add_flavor 'fault_2' 31 131072 5 1 'skip_resize'
++    add_flavor 'fault_2' 31 131072 7 1 'skip_resize'
+ }
+ 
+ function cmd_test_init() {
+diff --git a/trove/guestagent/datastore/mysql_common/service.py b/trove/guestagent/datastore/mysql_common/service.py
+index fe8358a..ba2ca22 100644
+--- a/trove/guestagent/datastore/mysql_common/service.py
++++ b/trove/guestagent/datastore/mysql_common/service.py
+@@ -102,7 +102,7 @@ def clear_expired_password():
+     if m:
+         try:
+             out, err = utils.execute("mysqladmin", "-p%s" % m.group(1),
+-                                     "password", "", run_as_root=True,
++                                     "password", "", "reload", run_as_root=True,
+                                      root_helper="sudo")
+         except exception.ProcessExecutionError:
+             LOG.exception(_("Cannot change mysql password."))
+diff --git a/trove/tests/api/instances_actions.py b/trove/tests/api/instances_actions.py
+index 8a95fe8..44cb3b0 100644
+--- a/trove/tests/api/instances_actions.py
++++ b/trove/tests/api/instances_actions.py
+@@ -413,6 +413,7 @@ class ResizeInstanceTest(ActionTestBase):
+     def wait_for_resize(self):
+         def is_finished_resizing():
+             instance = self.instance
++            print("LUKE trove/tests/api is_finished_resizing instance.status=%s" % str(instance.status))
+             if instance.status == "RESIZE":
+                 return False
+             asserts.assert_equal("ACTIVE", instance.status)
+@@ -469,6 +470,8 @@ class ResizeInstanceTest(ActionTestBase):
+         else:
+             flavor_name = CONFIG.values.get('instance_bigger_flavor_name',
+                                             'm1.small')
++        print("LUKE trove/tests/api obtain_flavor_ids self.expected_dbaas_flavor=%s" % str(self.expected_dbaas_flavor))
++        print("LUKE trove/tests/api obtain_flavor_ids next flavor_name=%s" % str(flavor_name))
+         flavors = self.dbaas.find_flavors_by_name(flavor_name)
+         asserts.assert_equal(len(flavors), 1,
+                              "Number of flavors with name '%s' "
+@@ -483,11 +486,15 @@ class ResizeInstanceTest(ActionTestBase):
+         asserts.assert_true(flavor_href is not None,
+                             "Flavor href '%s' not found!" % flavor_name)
+         self.expected_new_flavor_id = flavor.id
++        print("LUKE trove/tests/api obtain_flavor_ids self.expected_new_flavor_id=%s" % str(flavor.id))
+ 
+     @test(depends_on=[test_instance_resize_same_size_should_fail])
+     def test_status_changed_to_resize(self):
+         self.log_current_users()
+         self.obtain_flavor_ids()
++        print("LUKE trove/tests/api instance_id=%s" % str(self.instance_id))
++        print("LUKE trove/tests/api expected_new_flavor=%s" % str(self.expected_new_flavor_id))
++        print("LUKE trove/tests/api href=%s" % str(self.get_flavor_href(flavor_id=self.expected_new_flavor_id)))
+         self.dbaas.instances.resize_instance(
+             self.instance_id,
+             self.get_flavor_href(flavor_id=self.expected_new_flavor_id))
