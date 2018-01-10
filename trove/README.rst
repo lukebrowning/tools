@@ -2,10 +2,11 @@ Test and debug trove development patches before upstreaming
 ===========================================================
 
 The scripts run by the user are trovestack-run-gate-tests.sh
-and trovestack-run-int-tests.sh.  They invoke
+and trovestack-run-int-tests.sh which respectively run OpenStack
+Trove gate tests and Trove Integration tests.  They invoke
 trovestack-run.sh which contains code for patching several
 OpenStack projects including trove, diskimage-builder,
-devstack, requirements, ...
+devstack, requirements, ... with user provided patches.
 
 The basic development process is shown below.
 
