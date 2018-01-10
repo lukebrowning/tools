@@ -14,7 +14,8 @@ Note:  if there are no development patches and you
 just want to test the upstream code as is, then skip step 1.
 You will need to apply the trove-localrc.patch in step 2.
 
-1) transfer patch from gerrit to local machine
+1) transfer patch from gerrit to local machine and place
+   them in ~/patches/master
 
 2) re-generate your Trove patch with a small change provided
    in the patches directory::
