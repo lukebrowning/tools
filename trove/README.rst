@@ -1,8 +1,8 @@
 Test and debug trove development patches before upstreaming
 ===========================================================
 
-The scripts run by the user are trovestack-run-gate-tests.sh
-and trovestack-run-int-tests.sh which respectively run OpenStack
+The scripts run by the user are **trovestack-run-gate-tests.sh**
+and **trovestack-run-int-tests.sh** which respectively run OpenStack
 Trove gate tests and Trove Integration tests.  They invoke
 trovestack-run.sh which contains code for patching several
 OpenStack projects including trove, diskimage-builder,
@@ -15,7 +15,7 @@ just want to test the upstream code as is, then skip step 1.
 You will need to apply the trove-localrc.patch in step 2.
 
 1) transfer patch from gerrit to local machine and place
-   them in ~/patches/master
+   them in **./patches/master**
 
 2) re-generate your Trove patch with a small change provided
    in the patches directory::
@@ -37,16 +37,17 @@ You will need to apply the trove-localrc.patch in step 2.
 
    Specify --help for command arguments
 
-   It is necessary to specify --clean between invocations
+   It is necessary to specify **--clean** between invocations
    assuming one gets beyond the cloning and patching step
    which occurs in the beginning.  Code is placed in
    /opt/stack/ or /opt/stack/new depending on whether one
    runs integration or gate tests.
 
+
 Debug
 -----
 
-log files are generated.
+Log files are generated -- trovestack-int-tests-mysql.master.out
 
 One can exercise Trove through the OpenStack GUI by attaching
 a browser to the local host's IP address.  For example,
@@ -59,3 +60,18 @@ instance detail tab may contain a stack traceback.
 
 One can also log into the guest datastore - ssh ubuntu@y.y.y.y
 from the localhost.  There is no password.
+
+
+Erratic Results
+---------------
+
+Sometimes **--clean** does not fully clean the environment and it
+is necessary to re-boot the server and manually clean stray
+remnants from the last run.  These elements are identified by
+invoking the following commands::
+
+  > sudo systemctl status
+  > ps -edf
+  > df -h
+
+Look for items placed in **/opt/stack** or associated with **devstack**.

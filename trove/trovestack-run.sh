@@ -81,11 +81,22 @@ if [ "$1" == "--clean" ]; then
         rm -rf /home/ubuntu/images
     fi
 
-    if [ -d "$DEST/devstack" ]; then
-        pushd $DEST/devstack
-        ./unstack.sh 2>&1 | tee $LOG
-        popd
+    LASTDEVSTACK=/opt/stack/new/devstack
+    if [ -d "$LASTDEVSTACK" ]; then
+        LASTDEST=/opt/stack/new
+    else
+        LASTDEVSTACK=/opt/stack/devstack
+        if [ ! -d "$LASTDEVSTACK" ]; then
+            LASTDEVSTACK=$DEST/devstack
+            LASTDEST=$DEST
+        else
+            LASTDEST=/opt/stack
+        fi
     fi
+
+    pushd $LASTDEVSTACK >/dev/null 2>&1
+    ./unstack.sh 2>&1 | tee $LOG
+    popd >/dev/null 2>&1
 
     echo "####  Stopping services" | tee -a $LOG
     sudo systemctl stop devstack@tr-tmgr.service 2>&1 | tee -a $LOG
@@ -97,14 +108,12 @@ if [ "$1" == "--clean" ]; then
     sudo systemctl stop rabbitmq-server 2>&1 | tee -a $LOG
     sudo systemctl stop apache2 2>&1 | tee -a $LOG
 
-    if [ -d "$DEST/devstack" ]; then
-        pushd $DEST/devstack
-        ./clean.sh 2>&1 | tee -a $LOG
-        popd
-    fi
+    pushd $LASTDEVSTACK >/dev/null 2>&1
+    ./clean.sh 2>&1 | tee -a $LOG
+    popd >/dev/null 2>&1
 
-    if [ -f $DEST/data/swift/drives/images/swift.img ]; then
-        sudo umount $DEST/data/swift/drives/images/swift.img
+    if [ -f $LASTDEST/data/swift/drives/images/swift.img ]; then
+        sudo umount $LASTDEST/data/swift/drives/images/swift.img
     fi
 
     echo "####  Killing OpenStack processes sleeping on sockets" | tee -a $LOG
@@ -214,7 +223,7 @@ if [ "$1" == "--clean" ]; then
         done
     fi
 
-    echo "####  Detach remaining OpenStack loop devices attached from $DEST" | tee -a $LOG 
+    echo "####  Detach remaining OpenStack loop devices attached from $LASTDEST" | tee -a $LOG
     LOOPS=$(losetup -a | grep "$DEST" | awk '{print substr($1, 1, length($1)-1)}')
     if [ -n "$LOOPS" ]; then
         echo "Found $LOOPS" | tee -a $LOG
@@ -225,8 +234,8 @@ if [ "$1" == "--clean" ]; then
         done
     fi
 
-    echo "####  Umount remaining OpenStack loop devices attached from $DEST" | tee -a $LOG 
-    MNTS=$(df -h | grep "$DEST" | awk '{print $6}')
+    echo "####  Umount remaining OpenStack loop devices attached from $LASTDEST" | tee -a $LOG
+    MNTS=$(df -h | grep "$LASTDEST" | awk '{print $6}')
     if [ -n "$MNTS" ]; then
         echo "Found $MNTS" | tee -a $LOG
         for i in $MNTS
