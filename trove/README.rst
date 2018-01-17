@@ -70,23 +70,25 @@ from the localhost.  There is no password.
 Erratic Results
 ---------------
 
-Sometimes **--clean** does not remove everything that was created
-during the last run which leads to failures or erratic results.  This
-is an ongoing challenge working with the master branch of projects
-as change is the rule rather then the exception.  The clean logic
-is hardcoded to remove items that have been observed through trial
-and error as not being properly addressed by devstack's unstack
-and clean scripts.  This is not a problem for gate testing as devstack
-is not used more than once, but here we would like to be able to run
-trove integration and gate tests multiple times in a row without
-re-installing the VM.
+Devstack provides unstack and clean scripts to reset the environment
+so that tests may be run again.  However, it has been observed
+that everything does not always get cleaned and devstack often
+fails when it is re-run.  This is not an issue for Trove gate
+testing as these are generally one time use environments.
 
-The best way to maintain a reusable environment is to run **--clean-only**
-periodically and to manually clean the environment.  Here are some commands
-to run that help show the state of things:
+The scripts provided by this project provide **--clean** and **--clean-only**
+command arguments to improve the determinism and consistency of development
+and testing.  The clean logic is hardcoded to deal with specific elements that
+have been observed to escape the underlying devstack functions.  The clean
+logic is a continual work in progress as the master branch changes daily.
+The clean-only option enables the user to perform manual cleanup.
+
+After running clean-only, the user should run the following commands to
+identify additional elements that should be manually cleaned before re-testing:
 
   > sudo systemctl status
   > ps -edf
   > df -h
+  > pip list
 
-Look for items placed in **/opt/stack** or associated with **devstack**.
+Look for items located in **/opt/stack** or associated with **devstack**.
