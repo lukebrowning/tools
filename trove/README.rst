@@ -77,7 +77,7 @@ fails when it is re-run.  This is not an issue for Trove gate
 testing as these are generally only run once and then the VM is discarded.
 
 The scripts provided by this project provide **--clean** and **--clean-only**
-command arguments to improve the determinism and consistency of development
+command arguments to improve the determinism and repeatability of development
 and testing.  The clean logic is hardcoded to deal with specific elements that
 have been observed to escape the underlying devstack functions.  The clean
 logic is a continual work in progress as the master branch changes daily.
