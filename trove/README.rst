@@ -70,10 +70,20 @@ from the localhost.  There is no password.
 Erratic Results
 ---------------
 
-Sometimes **--clean** does not fully clean the environment and it
-is necessary to re-boot the server and manually clean stray
-remnants from the last run.  These elements are identified by
-invoking the following commands::
+Sometimes **--clean** does not remove everything that was created
+during the last run which leads to failures or erratic results.  This
+is an ongoing challenge working with the master branch of projects
+as change is the rule rather then the exception.  The clean logic
+is hardcoded to remove items that have been observed through trial
+and error as not being properly addressed by devstack's unstack
+and clean scripts.  This is not a problem for gate testing as devstack
+is not used more than once, but here we would like to be able to run
+trove integration and gate tests multiple times in a row without
+re-installing the VM.
+
+The best way to maintain a reusable environment is to run **--clean-only**
+periodically and to manually clean the environment.  Here are some commands
+to run that help show the state of things:
 
   > sudo systemctl status
   > ps -edf
