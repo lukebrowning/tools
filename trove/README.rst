@@ -84,7 +84,7 @@ logic is a continual work in progress as the master branch changes daily.
 The clean-only option enables the user to perform manual cleanup.
 
 After running clean-only, the user should run the following commands to
-identify additional elements that should be manually cleaned before re-testing:
+identify additional elements that should be manually cleaned before re-testing::
 
   > sudo systemctl status
   > ps -edf
