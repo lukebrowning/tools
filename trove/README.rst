@@ -74,7 +74,7 @@ Devstack provides unstack and clean scripts to reset the environment
 so that tests may be run again.  However, it has been observed
 that everything does not always get cleaned and devstack often
 fails when it is re-run.  This is not an issue for Trove gate
-testing as these are generally one time use environments.
+testing as these are generally only run once and then the VM is discarded.
 
 The scripts provided by this project provide **--clean** and **--clean-only**
 command arguments to improve the determinism and consistency of development
