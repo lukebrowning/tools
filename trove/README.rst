@@ -1,12 +1,17 @@
 Test and debug trove development patches before upstreaming
 ===========================================================
 
-The scripts run by the user are **trovestack-run-gate-tests.sh**
-and **trovestack-run-int-tests.sh** which respectively run OpenStack
+The scripts run by users are **trovestack-run-gate-tests.sh**
+and **trovestack-run-int-tests.sh**, which respectively run OpenStack
 Trove gate tests and Trove Integration tests.  They invoke
-trovestack-run.sh which contains code for patching several
-OpenStack projects including trove, diskimage-builder,
-devstack, requirements, ... with user provided patches.
+the internal script trovestack-run.sh which does the git cloning
+and patching of key projects.  This allows the user to develop
+and test his changes before upstreaming them.
+
+The OpenStack projects that can be patched are
+**trove, trove-dashboard,
+python-troveclient, tripleo-image-elements, diskimage-builder,
+devstack and requirements**.
 
 The basic development process is shown below.
 

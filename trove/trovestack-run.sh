@@ -95,7 +95,9 @@ if [ "$1" == "--clean" ]; then
     fi
 
     pushd $LASTDEVSTACK >/dev/null 2>&1
-    ./unstack.sh 2>&1 | tee $LOG
+    if [ -e unstack.sh ]; then
+        ./unstack.sh 2>&1 | tee $LOG
+    fi
     popd >/dev/null 2>&1
 
     echo "####  Stopping services" | tee -a $LOG
@@ -109,7 +111,9 @@ if [ "$1" == "--clean" ]; then
     sudo systemctl stop apache2 2>&1 | tee -a $LOG
 
     pushd $LASTDEVSTACK >/dev/null 2>&1
-    ./clean.sh 2>&1 | tee -a $LOG
+    if [ -e clean.sh ]; then
+        ./clean.sh 2>&1 | tee -a $LOG
+    fi
     popd >/dev/null 2>&1
 
     if [ -f $LASTDEST/data/swift/drives/images/swift.img ]; then
@@ -132,9 +136,12 @@ if [ "$1" == "--clean" ]; then
     sudo -H pip uninstall dib-utils 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall diskimage-builder 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall django 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall django-appconf 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall django-babel 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall django-compressor 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall django-openstack-auth 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall django-nose 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall django-pyscss 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall etcd3 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall etcd3gw 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall flake8 2>&1 </tmp/y.$$ | tee -a $LOG
@@ -191,12 +198,45 @@ if [ "$1" == "--clean" ]; then
     sudo -H pip uninstall python-troveclient 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall Sphinx 2>&1 </tmp/y.$$ | tee -a $LOG
     sudo -H pip uninstall tooz 2>&1 </tmp/y.$$ | tee -a $LOG
-    sudo -H pip uninstall trove 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall trove --isolated 2>&1 </tmp/y.$$ | tee -a $LOG
+
+    sudo -H pip uninstall zope.interface 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall tempest --isolated 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall mox3 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall mox 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall mock 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall zake 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall kazoo 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall hacking 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall nosexcover 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall nose-exclude 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall nosehtmloutput 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall nose 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall os-api-ref 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall os-brick 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall os-service-types 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall os-testr 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall stestr 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall six 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall oauth2client 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall sqlalchemy-migrate 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall SQLAlchemy 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall PyMySQL 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall stevedore 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall statsd 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall redis 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall cassandra-driver 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall CouchDB 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall pymongo 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall psycopg2 2>&1 </tmp/y.$$ | tee -a $LOG
+    sudo -H pip uninstall swift --isolated 2>&1 </tmp/y.$$ | tee -a $LOG
     rm -f /tmp/y.$$
 
-    sudo rm -rf /usr/local/share/diskimage-builder
     sudo rm -f /etc/trove/*
     sudo rm -f /usr/local/bin/trove*
+    sudo rm -f /usr/local/man
+    sudo rm -rf /usr/local/share/diskimage-builder
+    sudo rm -rf ~/.cache/*
     sudo rm -rf /opt/stack/*
 
     rm -f $STAGE_FILE
