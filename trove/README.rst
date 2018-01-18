@@ -15,39 +15,55 @@ devstack and requirements**.
 
 The basic development process is shown below.
 
-Note:  if there are no development patches and you
-just want to test the upstream code as is, then skip step 1.
-You will need to apply the trove-localrc.patch in step 2.
+1) transfer patches to be tested to the local machine.  Patches 
+   should be placed in patches/master/<project>.patch, where project is
+   one of the patchable projects identified above.  If you are providing
+   a trove patch, then it must be combined with a patch provided by
+   this toolset in step 2.
 
-1) transfer patch from gerrit to local machine and place
-   them in **./patches/master**
+   If there are no development patches and you just want to test
+   the master branch, then skip to step 3.
 
 2) re-generate your Trove patch with a small change provided
    in the patches directory::
 
-     X=~/gerritpatch.diff
+     X=~/devpatch.diff
 
      git clone git://github.com/openstack/trove /tmp/trove
      cd /tmp/trove
      patch -p1 < $X
-     patch  p1 < ~/patches/master/trove-localrc.patch
-     git diff > ~/patches/master/trove.patch
+     patch  p1 < patches/master/trove-localrc.patch
+     git diff > patches/master/trove.patch
      rm -rf /tmp/trove
 
-     If the trove-localrc.patch does not apply cleaning
-     then you should re-clone and manually make the code
-     change.  It is a very small code change.
+     If the trove-localrc.patch does not apply properly,
+     then you should re-clone trove, apply your patch, and then
+     manually make the code change associated with the
+     broken patch.  It is a very small code change.  Don't
+     forget to save the patch to patches/master/trove.patch!
 
 3) run trovestack-run-gate-tests.sh or trovestack-run-int-tests.sh
 
-   Specify --help for command arguments
+   Usage: **trovestack-run-int-tests.sh** --help | [ --clean-only ] | [ --clean ] [ <db> ]
 
-   It is necessary to specify **--clean** between invocations
-   assuming one gets beyond the cloning and patching step
-   which occurs in the beginning.  Code is placed in
-   /opt/stack/ or /opt/stack/new depending on whether one
-   runs integration or gate tests.
+   Usage: **trovestack-run-gate-tests.sh** --help | [ --clean-only ] | [ --clean ] [ <db> ]
 
+   All in one scripts to install, stack, create the db image, and run integration or gate tests for <db>.
+
+   The list of supported databases is defined by the trove project - mysql, mongodb,
+   percona, redis, postgresql, cassandra, couchbase, db2, and vertica.  The default
+   database is mysql.
+
+   The **--clean** argument unstacks devstack and allows one to re-start the install, stack,
+   and test process again.  The specified database is tested.  The **--clean-only** argument
+   unstacks and exits.
+
+   The following environment variables apply to trove and devstack projects respectively::
+
+     > export TROVE_BRANCH=${TROVE_BRANCH:-master}
+     > export PROJECT_BRANCH=${PROJECT_BRANCH:-"$TROVE_BRANCH"}
+
+   The only supported branches are stable/ocata and master
 
 Debug
 -----

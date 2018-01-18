@@ -25,11 +25,16 @@ export PYTHON_NEUTRONCLIENT_BRANCH=$PROJECT_BRANCH
 if [ "$1" == "--help" ]; then
     echo "Usage: trovestack-run-int-tests.sh --help | [ --clean-only ] | [ --clean ] [ <db> ]"
     echo ""
-    echo "All in one script to install, kickstart db, and run integrations tests"
+    echo "All in one script to install, kickstart db, and run integrations tests for <db>."
     echo ""
-    echo "The clean script unstacks devstack and allows one to start the install process over again"
+    echo "The list of supported databases is defined by the trove project - mysql, mongodb,"
+    echo "percona, redis, postgresql, cassandra, couchbase, db2, and vertica.  The default"
+    echo "database is mysql."
     echo ""
-    echo "The following environment variables apply to trove and devstack projects respectively"
+    echo "The --clean argument unstacks devstack and allows one to re-start the install, stack,"
+    echo "and test process again.  The clean-only argument unstacks and exits."
+    echo ""
+    echo "The following environment variables apply to trove and devstack projects respectively."
     echo ""
     echo 'export TROVE_BRANCH=${TROVE_BRANCH:-master}'
     echo 'export PROJECT_BRANCH=${PROJECT_BRANCH:-"$TROVE_BRANCH"}'
@@ -37,7 +42,6 @@ if [ "$1" == "--help" ]; then
     echo "Notes:"
     echo ""
     echo "1) the only supported branches are stable/ocata and master"
-    echo "2) the only database presently enabled is mysql"
     exit 0
 fi
 

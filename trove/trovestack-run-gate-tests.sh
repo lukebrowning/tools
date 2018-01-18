@@ -15,9 +15,14 @@ export DEST=/opt/stack/new
 if [ "$1" == "--help" ]; then
     echo "Usage: trovestack-run-gate-tests.sh --help | [ --clean-only ] | [ --clean ] [ <db> ]"
     echo ""
-    echo "All in one script to clean, install, and run gate tests [ FOR MYSQL ONLY PRESENTLY ]"
+    echo "All in one script to clean, install, and run gate tests for <db>"
     echo ""
-    echo "The clean script unstacks devstack and allows one to start the install process over again"
+    echo "The list of supported databases is defined by the trove project - mysql, mongodb,"
+    echo "percona, redis, postgresql, cassandra, couchbase, db2, and vertica.  The default"
+    echo "database is mysql."
+    echo ""
+    echo "The --clean argument unstacks devstack and allows one to re-start the install, stack,"
+    echo "and test process again.  The clean-only argument unstacks and exits."
     echo ""
     echo "The following environment variables apply to trove and devstack projects respectively"
     echo ""
@@ -27,7 +32,6 @@ if [ "$1" == "--help" ]; then
     echo "Notes:"
     echo ""
     echo "1) the only supported branches are stable/ocata and master"
-    echo "2) the only database presently enabled is mysql"
     exit 0
 fi
 
