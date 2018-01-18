@@ -66,7 +66,30 @@ fi
 
 DB=${1:-"mysql"}
 
-./trovestack-run.sh --log=trovestack-install.${TROVE_BRANCH//\//-}.out install
-./trovestack-run.sh --log=trovestack-kick-start-$DB.${TROVE_BRANCH//\//-}.out kick-start $DB
-./trovestack-run.sh --log=trovestack-int-tests-$DB.${TROVE_BRANCH//\//-}.out int-tests
+LOG=trovestack-install.${TROVE_BRANCH//\//-}.out
+./trovestack-run.sh --log=$LOG install
+rc=$?
+if [ $rc != 0 ]; then
+    echo "####  Failed ./trovestack-run.sh install rc=$rc" | tee -a $LOG
+    exit 1
+fi
+echo "####  $(date) Succeeded ./trovestack-run.sh install" | tee -a $LOG
+
+LOG=trovestack-kick-start-$DB.${TROVE_BRANCH//\//-}.out
+./trovestack-run.sh --log=$LOG kick-start $DB
+rc=$?
+if [ $rc != 0 ]; then
+    echo "####  Failed ./trovestack-run.sh kick-start rc=$rc" | tee -a $LOG
+    exit 1
+fi
+echo "####  $(date) Succeeded ./trovestack-run.sh kick-start" | tee -a $LOG
+
+LOG=trovestack-int-tests-$DB.${TROVE_BRANCH//\//-}.out
+./trovestack-run.sh --log=$LOG int-tests
+rc=$?
+if [ $rc != 0 ]; then
+    echo "####  Failed ./trovestack-run.sh int-tests rc=$rc" | tee -a $LOG
+    exit 1
+fi
+echo "####  $(date) Succeeded ./trovestack-run.sh int-tests" | tee -a $LOG
 

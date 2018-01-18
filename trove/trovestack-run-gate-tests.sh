@@ -119,7 +119,14 @@ fi
 setup
 
 # Install trove and devstack with development patches
-./trovestack-run.sh --log=trovestack-gate-install.${TROVE_BRANCH//\//-}.out gate-install
+LOG=trovestack-gate-install.${TROVE_BRANCH//\//-}.out
+./trovestack-run.sh --log=$LOG gate-install
+rc=$?
+if [ $rc != 0 ]; then
+    echo "####  Failed ./trovestack-run.sh gate-install rc=$rc" | tee -a $LOG
+    exit 1
+fi
+echo "####  $(date) Succeeded ./trovestack-run.sh gate-install" | tee -a $LOG
 
 BASEDIR=$(pwd)
 
