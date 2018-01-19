@@ -36,11 +36,11 @@ The basic development process is shown below.
      git diff > patches/master/trove.patch
      rm -rf /tmp/trove
 
-     If the trove-localrc.patch does not apply properly,
-     then you should re-clone trove, apply your patch, and then
-     manually make the code change associated with the
-     broken patch.  It is a very small code change.  Don't
-     forget to save the patch to patches/master/trove.patch!
+   If the trove-localrc.patch does not apply properly,
+   then you should re-clone trove, apply your patch, and then
+   manually make the code change associated with the
+   broken patch.  It is a very small code change.  Don't
+   forget to save the patch to patches/master/trove.patch!
 
 3) run trovestack-run-gate-tests.sh or trovestack-run-int-tests.sh
 
@@ -77,11 +77,19 @@ demo.  The password is 'passw0rd'.
 
 Sometimes when a test fails the guest images are still present
 and are visible through the browser.  In this case, the datastore
-instance detail tab may contain a stack traceback.
+instance detail tab may show the stack traceback of the error.
+You may have to change the project (**alt_demo**) to see this.
 
-One can also log into the guest datastore - ssh ubuntu@y.y.y.y
-from the localhost.  There is no password.
+If the failing datastore instances are not present, they were
+probably deleted by the test framework.  In this case, the error
+may be recreatable through the GUI.  Try to create the datastore
+manually, create databases and users, delete them, etc.
 
+At this point, you should be able to log into the instance
+and examine the trove log file /var/log/trove/trove-guestagent.log.
+Similarly, you can manually start and stop the database using
+the command systemctl start/stop <database>.  The user is 'ubuntu'.
+There is no password.
 
 Erratic Results
 ---------------

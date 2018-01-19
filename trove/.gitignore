@@ -1,0 +1,6 @@
+*.out
+*.bak
+*.pyc
+*.swo
+*.swp
+*.txt
