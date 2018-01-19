@@ -27,7 +27,7 @@ The basic development process is shown below.
 2) re-generate your Trove patch with a small change provided
    in the patches directory::
 
-     X=~/devpatch.diff
+     X=~/devpatch.diff     # This is your trove dev patch
 
      git clone git://github.com/openstack/trove /tmp/trove
      cd /tmp/trove
@@ -39,7 +39,7 @@ The basic development process is shown below.
    If the trove-localrc.patch does not apply properly,
    then you should re-clone trove, apply your patch, and then
    manually make the code change associated with the
-   broken patch.  It is a very small code change.  Don't
+   broken patch.  It is a very small code change (1 line).  Don't
    forget to save the patch to patches/master/trove.patch!
 
 3) run trovestack-run-gate-tests.sh or trovestack-run-int-tests.sh
@@ -68,28 +68,51 @@ The basic development process is shown below.
 Debug
 -----
 
-Log files are generated -- trovestack-int-tests-mysql.master.out
+The scripts capture standard output in log files which end 
+in '.out'. The clean commands copy the current set of log files
+to a new file that ends with '.bak'.  This allows you to compare
+the last two runs.  It is only two deep though, so you may 
+want to preserve results before they are copied over.
 
-One can exercise Trove through the OpenStack GUI by attaching
-a browser to the local host's IP address.  For example,
-http://x.x.x.x/dashboard. The default users are admin and
-demo.  The password is 'passw0rd'.
+This is the sequence of files produced for integration tests:
 
-Sometimes when a test fails the guest images are still present
-and are visible through the browser.  In this case, the datastore
-instance detail tab may show the stack traceback of the error.
-You may have to change the project (**alt_demo**) to see this.
+1. trovestack-install.master.out
+2. trovestack-kick-start-<db>.master.out
+3. trovestack-int-tests-<db>.master.out
+
+This is the sequence for gate tests:
+
+1. trovestack-gate-install.master.out
+2. trovestack-gate-stack.master.out
+3. trovestack-gate-<db>-functional.master.out
+4. trovestack-gate-<db>-supported-single.master.out
+
+Once devstack is running, you can connect to the OpenStack
+GUI using your browser::
+
+  > http://x.x.x.x/dashboard
+  > The default users are admin and demo.
+  > The password is 'passw0rd'.
+
+x.x.x.x is your test victim.  It should have at least 48 GBs of RAM and 80 GBs of storage.
+
+Sometimes you can see the failure in the browser by examining the
+stack tracebook of the datastore instance.  You may have to change
+the project (**alt_demo**) in the GUI to see this.
 
 If the failing datastore instances are not present, they were
-probably deleted by the test framework.  In this case, the error
-may be recreatable through the GUI.  Try to create the datastore
-manually, create databases and users, delete them, etc.
+probably deleted by the test framework.  If this happens, you
+may be able to recreate the error using the GUI.  Try to create
+a datastore instance, databases, users, delete them, etc.
 
-At this point, you should be able to log into the instance
-and examine the trove log file /var/log/trove/trove-guestagent.log.
-Similarly, you can manually start and stop the database using
-the command systemctl start/stop <database>.  The user is 'ubuntu'.
-There is no password.
+During this process, you should be able to connect to the
+instance which allows you to examine the trove-guestagent.log and 
+database log files.  Start the database, stop it, etc.
+
+To login into the datastore::
+
+  > ssh ubuntu@y.y.y.y
+  > there is no password
 
 Erratic Results
 ---------------
