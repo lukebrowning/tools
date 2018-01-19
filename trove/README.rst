@@ -68,7 +68,7 @@ The basic development process is shown below.
 Debug
 -----
 
-The scripts capture standard output in log files which end 
+Standard output is captured in log files which end 
 in '.out'. The clean commands copy the current set of log files
 to a new file that ends with '.bak'.  This allows you to compare
 the last two runs.  It is only two deep though, so you may 
@@ -106,10 +106,11 @@ may be able to recreate the error using the GUI.  Try to create
 a datastore instance, databases, users, delete them, etc.
 
 During this process, you should be able to connect to the
-instance which allows you to examine the trove-guestagent.log and 
-database log files.  Start the database, stop it, etc.
+instance which allows you to examine /var/log/trove/trove-guestagent.log and 
+database log files.  Start the database, stop it, etc.  This is particularly
+helpful when debugging systemd and database config problems.
 
-To login into the datastore::
+To login into the datastore (from x.x.x.x)::
 
   > ssh ubuntu@y.y.y.y
   > there is no password
