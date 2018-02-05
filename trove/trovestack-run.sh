@@ -236,7 +236,8 @@ if [ "$1" == "--clean" ]; then
     sudo rm -f /usr/local/bin/trove*
     sudo rm -f /usr/local/man
     sudo rm -rf /usr/local/share/diskimage-builder
-    sudo rm -rf ~/.cache/*
+    sudo rm -rf ~/.cache/image-create
+    sudo rm -rf ~/.cache/dib
     sudo rm -rf /opt/stack/*
 
     rm -f $STAGE_FILE

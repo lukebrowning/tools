@@ -17,12 +17,7 @@ if [ "$1" == "--help" ]; then
     echo ""
     echo "All in one script to clean, install, and run gate tests for <db>"
     echo ""
-    echo "The list of supported databases is defined by the trove project - mysql, mongodb,"
-    echo "percona, redis, postgresql, cassandra, couchbase, db2, and vertica.  The default"
-    echo "database is mysql."
-    echo ""
-    echo "The --clean argument unstacks devstack and allows one to re-start the install, stack,"
-    echo "and test process again.  The clean-only argument unstacks and exits."
+    echo "The clean script unstacks devstack and allows one to start the install process over again"
     echo ""
     echo "The following environment variables apply to trove and devstack projects respectively"
     echo ""
@@ -101,9 +96,9 @@ function run_unittests() {
     popd > /dev/null 2>&1
 }
 
-DB=${2:-"mysql"}
-
 if [[ "$1" =~ "--clean" ]]; then
+    DB=${2:-"mysql"}
+
     bak_file clean
     bak_file gate-install
     bak_file gate-stack
@@ -111,13 +106,14 @@ if [[ "$1" =~ "--clean" ]]; then
         bak_file gate-mysql-functional
     fi
     bak_file gate-$DB-supported-single
-#    bak_file gate-$DB-supported-multi
+    bak_file gate-$DB-supported-multi
     ./trovestack-run.sh --clean
     rm -f trovestack-progress.txt
     if [ "$1" == "--clean-only" ]; then
         exit 0
     fi
-    shift
+else
+    DB=${1:-"mysql"}
 fi
 
 setup
@@ -134,10 +130,13 @@ echo "####  $(date) Succeeded ./trovestack-run.sh gate-install" | tee -a $LOG
 
 BASEDIR=$(pwd)
 
-pushd $DEST/devstack
+systemctl status system-devstack.slice >/dev/null 2>&1
+if [ $? != 0 ]; then
 
-# Note passwords are hardcoded in trovestack so these can't be changed
-cat > local.conf << _EOF_
+    pushd $DEST/devstack
+
+    # Note passwords are hardcoded in trovestack so these can't be changed
+    cat > local.conf << _EOF_
 [[local|localrc]]
 DEST=/opt/stack/new
 DATA_DIR=/opt/stack/new/data
@@ -162,42 +161,56 @@ ENABLED_SERVICES=c-api,c-bak,c-sch,c-vol,cinder,dstat,etcd3,g-api,g-reg,heat,h-a
 
 _EOF_
 
-export BRIDGE_IP=10.1.0.1
-export PATH_DEVSTACK_SRC=$DEST/devstack
-export LOGFILE=$DEST/devstacklog.txt
+    export BRIDGE_IP=10.1.0.1
+    export PATH_DEVSTACK_SRC=$DEST/devstack
+    export LOGFILE=$DEST/devstacklog.txt
 
-LOG=$BASEDIR/trovestack-gate-stack.${TROVE_BRANCH//\//-}.out
-echo "####  $(date) Invoke ./stack.sh" | tee -a $LOG
-echo "####  Use tail -f $LOGFILE to see progress in another window" | tee -a $LOG
-./stack.sh >> $LOG 2>&1
-rc=$?
-if [ $rc != 0 ]; then
-    echo "####  Failed ./stack.sh rc=$rc" | tee -a $LOG
-    exit 1
+    LOG=$BASEDIR/trovestack-gate-stack.${TROVE_BRANCH//\//-}.out
+    echo "####  $(date) Invoke ./stack.sh" | tee -a $LOG
+    echo "####  Use tail -f $LOGFILE to see progress in another window" | tee -a $LOG
+    ./stack.sh >> $LOG 2>&1
+    rc=$?
+    if [ $rc != 0 ]; then
+        echo "####  Failed ./stack.sh rc=$rc" | tee -a $LOG
+        exit 1
+    fi
+    echo "####  $(date) Succeeded ./stack.sh" | tee -a $LOG
+
 fi
-echo "####  $(date) Succeeded ./stack.sh" | tee -a $LOG
 
 pushd $DEST/trove/integration/scripts
 
-LOG=$BASEDIR/trovestack-gate-mysql-functional.${TROVE_BRANCH//\//-}.out
-echo "####  Start legacy-trove-functional-dsvm-mysql" | tee -a $LOG
-./trovestack dsvm-gate-tests mysql 2>&1 | tee -a $LOG
-rc=$?
-if [ $rc != 0 ]; then
-    echo "####  Failed legacy-trove-functional-dsvm-mysql rc=$rc" | tee -a $LOG
-    exit 1
+if [ "$DB" == "mysql" ]; then
+    LOG=$BASEDIR/trovestack-gate-$DB-functional.${TROVE_BRANCH//\//-}.out
+    echo "####  Start legacy-trove-functional-dsvm-$DB" | tee -a $LOG
+    ./trovestack dsvm-gate-tests $DB 2>&1 | tee -a $LOG
+    rc=$?
+    if [ $rc != 0 ]; then
+        echo "####  Failed legacy-trove-functional-dsvm-$DB rc=$rc" | tee -a $LOG
+        exit 1
+    fi
+    echo "####  Succeeded legacy-trove-functional-dsvm-$DB" | tee -a $LOG
 fi
-echo "####  Succeeded legacy-trove-functional-dsvm-mysql" | tee -a $LOG
 
-LOG=$BASEDIR/trovestack-gate-mysql-supported-single.${TROVE_BRANCH//\//-}.out
-echo "####  Start legacy-trove-scenario-dsvm-mysql-single" | tee -a $LOG
-./trovestack dsvm-gate-tests mysql mysql-supported-single 2>&1 | tee -a $LOG
+LOG=$BASEDIR/trovestack-gate-$DB-supported-single.${TROVE_BRANCH//\//-}.out
+echo "####  Start legacy-trove-scenario-dsvm-$DB-single" | tee -a $LOG
+./trovestack dsvm-gate-tests $DB $DB-supported-single 2>&1 | tee -a $LOG
 rc=$?
 if [ $rc != 0 ]; then
-    echo "####  Failed legacy-trove-scenario-dsvm-mysql-single rc=$rc" | tee -a $LOG
+    echo "####  Failed legacy-trove-scenario-dsvm-$DB-single rc=$rc" | tee -a $LOG
     exit 1
 fi
-echo "####  Succeeded legacy-trove-scenario-dsvm-mysql-single" | tee -a $LOG
+echo "####  Succeeded legacy-trove-scenario-dsvm-$DB-single" | tee -a $LOG
+
+#LOG=$BASEDIR/trovestack-gate-$DB-supported-multiple.${TROVE_BRANCH//\//-}.out
+#echo "####  Start legacy-trove-scenario-dsvm-$DB-multiple" | tee -a $LOG
+#./trovestack dsvm-gate-tests $DB $DB-supported-multiple 2>&1 | tee -a $LOG
+#rc=$?
+#if [ $rc != 0 ]; then
+#    echo "####  Failed legacy-trove-scenario-dsvm-$DB-multiple rc=$rc" | tee -a $LOG
+#    exit 1
+#fi
+#echo "####  Succeeded legacy-trove-scenario-dsvm-$DB-multiple" | tee -a $LOG
 
 # Uncomment the following line to run unit tests: pep8, py27, py35, ...
 # run_unittests
